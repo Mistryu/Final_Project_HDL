@@ -1,0 +1,12 @@
+# Icarus Verilog / simulation build outputs
+RISC-V_code/RISCV/local/simv*
+RISC-V_code/RISCV/local/*.vcd
+# Keep the directory
+!RISC-V_code/RISCV/local/.gitkeep
+
+# Other common build artifacts (if introduced later)
+*.o
+*.d
+*.vcd
+*.lxt
+*.fst
