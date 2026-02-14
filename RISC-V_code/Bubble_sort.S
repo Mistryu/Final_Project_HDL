@@ -39,3 +39,10 @@ outer_increment:
     jal x0, outer_loop
 
 done:
+    # Write DONE flag so Python script can detect completion (0xCAFEBABE at 0x1FFC)
+    lui  x14, 0xcafec             # 0xCAFEC000; then addi 0xabe (sign-ext) -> 0xCAFEBABE
+    addi x14, x14, 0xabe
+    lui  x15, 0x2              # 0x2000; then addi -4 gives 0x1FFC
+    addi x15, x15, 0xffc
+    addi x0, x0, 0             # NOP so SW reads x14/x15 from reg file
+    sw   x14, 0(x15)
