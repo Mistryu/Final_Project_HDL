@@ -1,0 +1,7 @@
+0cafeb737  // lui  x14, 0xcafeb
+abe70713   // addi x14, x14, 0xabe
+000027b7   // lui  x15, 0x2
+ffc78793   // addi x15, x15, -4
+00000013   // nop
+00e7a023   // sw   x14, 0(x15)
+0000006f   // jal  x0, 0

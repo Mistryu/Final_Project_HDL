@@ -40,7 +40,7 @@ outer_increment:
 
 done:
     # Write DONE flag so Python script can detect completion (0xCAFEBABE at 0x1FFC)
-    lui  x14, 0xcafec             # 0xCAFEC000; then addi 0xabe (sign-ext) -> 0xCAFEBABE
+    lui  x14, 0xcafeb             # 0xCAFEC000; then addi 0xabe (sign-ext) -> 0xCAFEBABE
     addi x14, x14, 0xabe
     lui  x15, 0x2              # 0x2000; then addi -4 gives 0x1FFC
     addi x15, x15, 0xffc

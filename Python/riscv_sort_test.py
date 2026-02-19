@@ -3,20 +3,20 @@ import time
 import random
 import struct
 
-BITSTREAM_PATH = "RISCV_final.bit"
+BITSTREAM_PATH = "risc_v_wrapper.bit"
 PROGRAM_HEX = "Bubble_sort.hex"
 
-# Our memory layout
-INSTRUCTION_BASE = 0x0000
-DATA_RAM_BASE = 0x1000
-STATUS_FLAG_OFFSET = 0x1FFC   # Position of the status flag
+# TWO SEPARATE BRAM CONTROLLERS
+BRAM_SIZE = 0x2000
+
+STATUS_FLAG_OFFSET = 0x1FFC
 
 MAGIC_SUCCESS = 0xCAFEBABE
 MAGIC_FAILURE = 0xDEADBEAF
 
 ARRAY_SIZE = 32          
-ARRAY_MIN = 1000         # Minimum signed 32-bit value (-2^31 = -2147483648) TODO for testing change to like a 1000 to make it easier
-ARRAY_MAX = 1000         # Maximum signed 32-bit value (2^31 - 1 = 2147483647)
+ARRAY_MIN = 1
+ARRAY_MAX = 100
 POLL_TIMEOUT = 30.0
 
 # AXI GPIO CH1 regs
@@ -41,43 +41,41 @@ def load_hex_file(filename):
     return instructions
 
 
-def write_instructions(bram, instructions):
-    print(f"\n Writing {len(instructions)} instructions to I-ROM at offset {hex(INSTRUCTION_BASE)}")
+def write_instructions(instr_bram, instructions):
+    print(f"\nWriting {len(instructions)} instructions to I-MEM at {hex(INSTR_BRAM_BASE)}")
     
     for i, instr in enumerate(instructions):
-        addr = INSTRUCTION_BASE + (i * 4)
-        bram.write(addr, instr)
+        addr = i * 4
+        instr_bram.write(addr, instr)
         
-    print(f"Instructions written successfully :)")
+    print(f"Instructions written successfully")
 
-def write_data_array(bram, data):
-    print(f"\n Writing {len(data)} integers to D-RAM at offset {hex(DATA_RAM_BASE)}")
+def write_data_array(data_bram, data):
+    print(f"\nWriting {len(data)} integers to D-MEM at {hex(DATA_BRAM_BASE)}")
 
     for i, value in enumerate(data):
-        addr = DATA_RAM_BASE + (i * 4)
-        unsigned_val = value & 0xFFFFFFFF    # In case of python doing weird large int or some unpredictable behavior
-        bram.write(addr, unsigned_val)
+        addr = i * 4
+        unsigned_val = value & 0xFFFFFFFF
+        data_bram.write(addr, unsigned_val)
         
     print(f"Test array written successfully")
 
-def read_data_array(bram, size):
-
+def read_data_array(data_bram, size):
     result = []
     for i in range(size):
-        addr = DATA_RAM_BASE + (i * 4)
-        unsigned_val = bram.read(addr)
+        addr = i * 4
+        unsigned_val = data_bram.read(addr)
         signed_val = struct.unpack('i', struct.pack('I', unsigned_val))[0]
         result.append(signed_val)
     return result
 
-# This function just check for the status flag in a loop with timeout. The timeout exists in case the RISC-V core hangs
-def poll_status_flag(bram):
-    print(f"\nPolling status flag at {hex(STATUS_FLAG_OFFSET)} with timeout {POLL_TIMEOUT}s")
+def poll_status_flag(data_bram):
+    print(f"\nPolling status flag at offset {hex(STATUS_FLAG_OFFSET)} in D-MEM")
     start_time = time.time()
     poll_count = 0
     
     while True:
-        status = bram.read(STATUS_FLAG_OFFSET)
+        status = data_bram.read(STATUS_FLAG_OFFSET)
         poll_count += 1
         
         if status == MAGIC_SUCCESS:
@@ -98,52 +96,118 @@ def poll_status_flag(bram):
         time.sleep(0.01)
 
 def main():
-    print("RISC-V Sorting Core Verification Script")    
+    print("RISC-V Sorting Core Verification\n")
     
     ol = Overlay(BITSTREAM_PATH, download=True)
-    print("Bitstream loaded successfully")
     
+    bram_controllers = {}
+    for key, info in ol.mem_dict.items():
+        if "axi_bram_ctrl" in key.lower() or "bram" in key.lower():
+            addr = int(info.get('phys_addr', info.get('base_address', info.get('addr'))))
+            size = int(info.get('addr_range', info.get('range', info.get('size'))))
+            bram_controllers[key] = {
+                'addr': addr,
+                'size': size
+            }
+    
+    if len(bram_controllers) < 2:
+        raise RuntimeError(f"ERROR: Expected 2 BRAM controllers, found {len(bram_controllers)}")
+    
+    # Setup GPIO
     gpio_key = next(k for k in ol.ip_dict if "gpio" in k.lower())
-    bram_key = next(k for k in ol.mem_dict if "axi_bram_ctrl" in k.lower() or "bram" in k.lower())
-    
     gpio = MMIO(int(ol.ip_dict[gpio_key]["phys_addr"]), int(ol.ip_dict[gpio_key]["addr_range"]))
     
-    mi = ol.mem_dict[bram_key]
-    BRAM_BASE = int(mi.get("phys_addr", mi.get("base_address", mi.get("addr"))))
-    BRAM_SIZE = int(mi.get("addr_range", mi.get("range", mi.get("size"))))
-    bram = MMIO(BRAM_BASE, BRAM_SIZE)
+    # Sorting the brams to get which is which 
+    sorted_brams = sorted(bram_controllers.items(), key=lambda x: x[1]['addr'])
     
-    print(f"GPIO: {gpio_key} at {hex(int(ol.ip_dict[gpio_key]['phys_addr']))}")
-    print(f"BRAM: {bram_key} at {hex(BRAM_BASE)}, size {hex(BRAM_SIZE)}")
+    # Lower address = Data BRAM (0x40000000)
+    # Higher address = Instruction BRAM (0x42000000)
+    data_info = sorted_brams[0][1]
+    instr_info = sorted_brams[1][1]
+    
+    DATA_BRAM_BASE = data_info['addr']
+    DATA_BRAM_SIZE = data_info['size']
+    INSTR_BRAM_BASE = instr_info['addr']
+    INSTR_BRAM_SIZE = instr_info['size']
+    
+    instr_bram = MMIO(INSTR_BRAM_BASE, INSTR_BRAM_SIZE)
+    data_bram = MMIO(DATA_BRAM_BASE, DATA_BRAM_SIZE)
     
     
+    print(f"GPIO at {hex(int(ol.ip_dict[gpio_key]['phys_addr']))}")
+    print(f"I-MEM at {hex(INSTR_BRAM_BASE)}")
+    print(f"D-MEM at {hex(DATA_BRAM_BASE)}\n")
     
-    print("PHASE 1: INITIALIZATION & INJECTION")
     
+    print("\nPHASE 1: INITIALIZATION & INJECTION")
+    
+    # Hold in reset
     gpio.write(GPIO_TRI, 0x0)
-    gpio.write(GPIO_DATA, 0x0); time.sleep(0.02)
+    gpio.write(GPIO_DATA, 0x0)
+    
+    time.sleep(0.02)
     print("RISC-V core held in reset")
     
+    gpio_val = gpio.read(GPIO_DATA)
+    print(f"GPIO readback (should be 0): {gpio_val}")
+    
     instructions = load_hex_file(PROGRAM_HEX)
-    write_instructions(bram, instructions)
+    write_instructions(instr_bram, instructions)
     
+    print("\nVerifying instruction write:")
+    for i in range(min(5, len(instructions))):
+        addr = i * 4
+        written = instructions[i]
+        readback = instr_bram.read(addr)
+        match = "✓" if written == readback else "✗"
+        print(f"  instr[{i}] @ {hex(addr)}: wrote {hex(written)}, read {hex(readback)} {match}")
+    
+    # Write data to DATA BRAM
     test_array = [random.randint(ARRAY_MIN, ARRAY_MAX) for _ in range(ARRAY_SIZE)]
-    write_data_array(bram, test_array)
+    write_data_array(data_bram, test_array)
     
-    # Reset status flag in case of previous runs
-    bram.write(STATUS_FLAG_OFFSET, 0x0)
+    # Reset status flag
+    data_bram.write(STATUS_FLAG_OFFSET, 0x0)
     
     golden_result = sorted(test_array)
     
+    # Verify data write
+    print("\nVerifying data write:")
+    for i in range(min(5, ARRAY_SIZE)):
+        addr = i * 4
+        val = data_bram.read(addr)
+        signed_val = struct.unpack('i', struct.pack('I', val))[0]
+        print(f"  data[{i}] @ {hex(addr)}: {signed_val} ({hex(val)})")
     
-    print("PHASE 2: EXECUTION")
-
+    print("\nPHASE 2: EXECUTION")
+    
+    print(f"GPIO before release: {hex(gpio.read(GPIO_DATA))}")
+    
+    # Release reset
     gpio.write(GPIO_DATA, 0x1)
-    time.sleep(0.01)
-    success, magic, exec_time = poll_status_flag(bram)
+    time.sleep(0.1)
     
-
-    print("PHASE 3: VERIFICATION")
+    gpio_val = gpio.read(GPIO_DATA)
+    print(f"GPIO after release (should be 1): {hex(gpio_val)}")
+    if gpio_val != 1:
+        print("WARNING: GPIO did not change to 1!")
+    
+    first_instr_check = instr_bram.read(0x0)
+    print(f"First instruction in I-MEM: {hex(first_instr_check)}")
+    
+    success, magic, exec_time = poll_status_flag(data_bram)
+    
+    # Read data after execution
+    print("\nReading data after execution:")
+    for i in range(min(5, ARRAY_SIZE)):
+        addr = i * 4
+        val = data_bram.read(addr)
+        signed_val = struct.unpack('i', struct.pack('I', val))[0]
+        print(f"  data[{i}] @ {hex(addr)}: {signed_val} ({hex(val)})")
+    
+    print(f"\nStatus flag @ {hex(STATUS_FLAG_OFFSET)}: {hex(data_bram.read(STATUS_FLAG_OFFSET))}")
+    
+    print("\nPHASE 3: VERIFICATION")
     
     if not success:
         if magic == MAGIC_FAILURE:
@@ -152,7 +216,7 @@ def main():
             print(f"\n TIMEOUT or UNKNOWN STATUS: {hex(magic)}")
         return False
     
-    hw_result = read_data_array(bram, ARRAY_SIZE)
+    hw_result = read_data_array(data_bram, ARRAY_SIZE)
     
     mismatches = []
     for i in range(ARRAY_SIZE):
@@ -163,19 +227,17 @@ def main():
     print(f"Array size: {ARRAY_SIZE}")
     
     if mismatches:
-        print(f"\nFAILURE: {len(mismatches)} mismatches found!")
-        print("\nMismatches:")
-        
-        for i, (idx, expected, actual) in enumerate(mismatches[:31]):
+        print(f"\n FAILURE: {len(mismatches)} mismatches found!")
+        for idx, expected, actual in mismatches[:10]:
             print(f"  Index {idx}: Expected {expected}, Got {actual}")
         return False
     else:
-        print("\nSUCCESS: All values match!")
-        print(f"Sorted values: {hw_result[:31]}")
+        print("\n SUCCESS: All values match!")
+        print(f"Sorted values: {hw_result[:10]}...")
         return True
 
-# Entry Point
 if __name__ == "__main__":
+    
     try:
         success = main()
         exit(0 if success else 1)
