@@ -43,6 +43,6 @@ done:
     # Write DONE flag so Python script can detect completion (0xCAFEBABE at 0x1FFC)
     lui  x14, 0xcafeb             # 0xCAFEC000; then addi 0xabe (sign-ext) -> 0xCAFEBABE
     addi x14, x14, 0xabe
-    lui  x15, 0x2ffc              # loads 0x1FFC as flag successful 
+    lui  x15, 0x1ffc              # loads 0x1FFC as flag successful 
     addi x0, x0, 0             # NOP so SW reads x14/x15 from reg file
     sw   x14, 0(x15)
