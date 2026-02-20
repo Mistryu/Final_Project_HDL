@@ -12,7 +12,7 @@
 
 module rv_pl(
   input  wire clk,
-  input  wire rst_n,
+  input  wire resetn,
 
   // signals for instr memory BRAM
   output  wire        imem_clk,
@@ -32,6 +32,11 @@ module rv_pl(
   output  wire [31:0] dmem_wd,
   input   wire [31:0] dmem_rd
 );
+
+  // Fix for vivado warning for reset naming
+  wire rst_n;
+  assign rst_n = resetn;
+
   // IF stage
   reg  [31:0] pc;
   wire [31:0] pc_p4 = pc + 32'd4;
@@ -80,41 +85,37 @@ module rv_pl(
   wire [1:0]  w_sel_result;
 
   // IMEM 
-  // assign imem_enb = 1'b1; // always enabled
-  // assign imem_web = 4'b0000; // never write
-  // assign imem_addr = pc << 2; // word-addressed
-  // assign imem_wd = 32'b0; // unused
-  // assign instr_f = imem_rd; // directly connect imem read data to IF stage instruction
-  // assign imem_clk = clk;
-  // assign imem_rstn = rst_n;
-
-  assign imem_enb  = 1'b1;          // FIXED: always enabled
-  assign imem_web  = 4'b0000;
-  assign imem_addr = pc;             // FIXED: no << 2, byte-addressed
-  assign imem_wd   = 32'b0;
-  assign instr_f   = imem_rd;
-  assign imem_clk  = clk;
-  assign imem_rstn = ~rst_n;     
+  assign imem_enb = 1'b1; // always enabled
+  assign imem_web = 4'b0000; // never write
+  assign imem_addr = pc; // byte-addressed
+  assign imem_wd = 32'b0; // unused
+  assign instr_f = imem_rd; // directly connect imem read data to IF stage instruction
+  assign imem_clk = clk;
+  assign imem_rstn = rst_n;
+  // replaced old usage
+  // imem IMEM (
+  //   .addr(pc),
+  //   .rd(instr_f)
+  // );
 
   // DMEM
   wire [31:0] dm_rd;
 
-  // assign dmem_enb = (m_we_dm) ? 1'b1 : 1'b0; // enabled only when m_we_dm is high
-  // assign dmem_web = (m_we_dm) ? 4'b1111 : 4'b0000; // all bytes enabled
-  // assign dmem_addr = m_alu_o << 2; // word-addressed from EX stage ALU output
-  // assign dmem_wd = m_dm_wd; // write data from EX stage forwarding logic
-  // assign dm_rd = dmem_rd; // directly connect dmem read data to MA/WB register for forwarding to WB stage
-  // assign dmem_clk = clk;
-  // assign dmem_rstn = rst_n;
-
-  assign dmem_enb  = 1'b1;          // FIXED: always enabled for reads too
-  assign dmem_web  = (m_we_dm) ? 4'b1111 : 4'b0000;
-  assign dmem_addr = m_alu_o;        // FIXED: no << 2, byte-addressed
-  assign dmem_wd   = m_dm_wd;
-  assign dm_rd     = dmem_rd;
-  assign dmem_clk  = clk;
-  assign dmem_rstn = ~rst_n;         // FIXED: invert for active-high BRAM reset
-
+  assign dmem_enb = (m_we_dm) ? 1'b1 : 1'b0; // enabled only when m_we_dm is high
+  assign dmem_web = (m_we_dm) ? 4'b1111 : 4'b0000; // all bytes enabled
+  assign dmem_addr = m_alu_o; // byte-addressed from EX stage ALU output
+  assign dmem_wd = m_dm_wd; // write data from EX stage forwarding logic
+  assign dm_rd = dmem_rd; // directly connect dmem read data to MA/WB register for forwarding to WB stage
+  assign dmem_clk = clk;
+  assign dmem_rstn = rst_n;
+  // replaced old usage
+  // dmem DMEM (
+  //   .clk(clk),
+  //   .we(m_we_dm),
+  //   .addr(m_alu_o),
+  //   .wd(m_dm_wd),
+  //   .rd(dm_rd)
+  // );
 
   // ID stage decode
   wire [4:0] d_rs1 = d_instr[19:15];

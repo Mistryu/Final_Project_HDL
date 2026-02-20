@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Thu Feb 19 01:45:49 2026" VIVADOVERSION="2021.1">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Fri Feb 20 21:17:21 2026" VIVADOVERSION="2021.1">
 
   <SYSTEMINFO ARCH="zynq" DEVICE="7z020" NAME="axi_bram_bd" PACKAGE="clg400" SPEEDGRADE="-1"/>
 
@@ -169,7 +169,7 @@
   </EXTERNALINTERFACES>
 
   <MODULES>
-    <MODULE COREREVISION="2" FULLNAME="/RISC_V_core_pipelined_0" HWVERSION="1.0" INSTANCE="RISC_V_core_pipelined_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="RISC_V_core_pipelined" VLNV="user.org:user:RISC_V_core_pipelined:1.0">
+    <MODULE COREREVISION="1" FULLNAME="/RISC_V_core_pipelined_0" HWVERSION="2.0" INSTANCE="RISC_V_core_pipelined_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="RISC_V_core_pipelined" VLNV="user.org:user:RISC_V_core_pipelined:2.0">
       <DOCUMENTS/>
       <PARAMETERS>
         <PARAMETER NAME="Component_Name" VALUE="axi_bram_bd_RISC_V_core_pipelined_0_1"/>
@@ -181,44 +181,44 @@
             <CONNECTION INSTANCE="processing_system7_0" PORT="FCLK_CLK0"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="rst_n" POLARITY="ACTIVE_LOW" SIGIS="rst" SIGNAME="axi_gpio_0_gpio_io_o">
+        <PORT DIR="I" NAME="resetn" POLARITY="ACTIVE_LOW" SIGIS="rst" SIGNAME="axi_gpio_0_gpio_io_o">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_gpio_0" PORT="gpio_io_o"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="imem_clk" SIGIS="clk" SIGNAME="RISC_V_core_pipelined_0_imem_clk">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="clka"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="clkb"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="imem_enb" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_enb">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="ena"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="enb"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="imem_rstn" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rstn">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="rsta"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="rstb"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" LEFT="3" NAME="imem_web" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_web">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="wea"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="web"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" LEFT="31" NAME="imem_addr" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_addr">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="addra"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="addrb"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" LEFT="31" NAME="imem_wd" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_wd">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="dina"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="dinb"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="I" LEFT="31" NAME="imem_rd" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_rd">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="douta"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="doutb"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="dmem_clk" SIGIS="clk" SIGNAME="RISC_V_core_pipelined_0_dmem_clk">
@@ -1446,37 +1446,37 @@
         </PORT>
         <PORT DIR="O" NAME="bram_rst_a" SIGIS="rst" SIGNAME="axi_bram_ctrl_1_bram_rst_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="rstb"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="rsta"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="bram_clk_a" SIGIS="clk" SIGNAME="axi_bram_ctrl_1_bram_clk_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="clkb"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="clka"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="bram_en_a" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_en_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="enb"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="ena"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" LEFT="3" NAME="bram_we_a" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_we_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="web"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="wea"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" LEFT="12" NAME="bram_addr_a" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_addr_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="addrb"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="addra"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" LEFT="31" NAME="bram_wrdata_a" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_wrdata_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="dinb"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="dina"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="I" LEFT="31" NAME="bram_rddata_a" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_rddata_a">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="doutb"/>
+            <CONNECTION INSTANCE="blk_mem_gen_1" PORT="douta"/>
           </CONNECTIONS>
         </PORT>
       </PORTS>
@@ -1858,7 +1858,7 @@
         </PORT>
         <PORT DIR="O" LEFT="0" NAME="gpio_io_o" RIGHT="0" SIGIS="undef" SIGNAME="axi_gpio_0_gpio_io_o">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="rst_n"/>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="resetn"/>
           </CONNECTIONS>
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_bd_imp" PORT="gpio_rtl_0_tri_o"/>
@@ -2999,12 +2999,12 @@
             <CONNECTION INSTANCE="axi_bram_ctrl_0" PORT="bram_rddata_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT CLKFREQUENCY="100000000" DIR="I" NAME="clkb" SIGIS="clk" SIGNAME="RISC_V_core_pipelined_0_dmem_clk">
+        <PORT DIR="I" NAME="clkb" SIGIS="clk" SIGNAME="RISC_V_core_pipelined_0_dmem_clk">
           <CONNECTIONS>
             <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="dmem_clk"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="rstb" POLARITY="ACTIVE_LOW" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_dmem_rstn">
+        <PORT DIR="I" NAME="rstb" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_dmem_rstn">
           <CONNECTIONS>
             <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="dmem_rstn"/>
           </CONNECTIONS>
@@ -3229,81 +3229,81 @@
         <PARAMETER NAME="EDK_IPTYPE" VALUE="PERIPHERAL"/>
       </PARAMETERS>
       <PORTS>
-        <PORT DIR="I" NAME="clka" SIGIS="clk" SIGNAME="RISC_V_core_pipelined_0_imem_clk">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_clk"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" NAME="rsta" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rstn">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_rstn"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" NAME="ena" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_enb">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_enb"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="3" NAME="wea" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_web">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_web"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="31" NAME="addra" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_addr">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_addr"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="31" NAME="dina" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_wd">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_wd"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="31" NAME="douta" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_rd">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_rd"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT CLKFREQUENCY="100000000" DIR="I" NAME="clkb" SIGIS="clk" SIGNAME="axi_bram_ctrl_1_bram_clk_a">
+        <PORT DIR="I" NAME="clka" SIGIS="clk" SIGNAME="axi_bram_ctrl_1_bram_clk_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_clk_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="rstb" POLARITY="ACTIVE_LOW" SIGIS="rst" SIGNAME="axi_bram_ctrl_1_bram_rst_a">
+        <PORT DIR="I" NAME="rsta" SIGIS="rst" SIGNAME="axi_bram_ctrl_1_bram_rst_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_rst_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="enb" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_en_a">
+        <PORT DIR="I" NAME="ena" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_en_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_en_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="3" NAME="web" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_we_a">
+        <PORT DIR="I" LEFT="3" NAME="wea" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_we_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_we_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="31" NAME="addrb" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_addr_a">
+        <PORT DIR="I" LEFT="31" NAME="addra" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_addr_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_addr_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="31" NAME="dinb" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_wrdata_a">
+        <PORT DIR="I" LEFT="31" NAME="dina" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_wrdata_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_wrdata_a"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="31" NAME="doutb" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_rddata_a">
+        <PORT DIR="O" LEFT="31" NAME="douta" RIGHT="0" SIGIS="undef" SIGNAME="axi_bram_ctrl_1_bram_rddata_a">
           <CONNECTIONS>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="bram_rddata_a"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="clkb" SIGIS="clk" SIGNAME="RISC_V_core_pipelined_0_imem_clk">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_clk"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="rstb" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rstn">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_rstn"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="enb" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_enb">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_enb"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="3" NAME="web" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_web">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_web"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="31" NAME="addrb" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_addr">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_addr"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="31" NAME="dinb" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_wd">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_wd"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="31" NAME="doutb" RIGHT="0" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_rd">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_rd"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="rsta_busy" SIGIS="undef"/>
         <PORT DIR="O" NAME="rstb_busy" SIGIS="undef"/>
       </PORTS>
       <BUSINTERFACES>
-        <BUSINTERFACE BUSNAME="RISC_V_core_pipelined_0_imem" NAME="BRAM_PORTA" TYPE="TARGET" VLNV="xilinx.com:interface:bram:1.0">
+        <BUSINTERFACE BUSNAME="axi_bram_ctrl_1_BRAM_PORTA" NAME="BRAM_PORTA" TYPE="TARGET" VLNV="xilinx.com:interface:bram:1.0">
           <PARAMETER NAME="MEM_SIZE" VALUE="8192"/>
           <PARAMETER NAME="MEM_WIDTH" VALUE="32"/>
           <PARAMETER NAME="MEM_ECC" VALUE="NONE"/>
@@ -3320,7 +3320,7 @@
             <PORTMAP LOGICAL="WE" PHYSICAL="wea"/>
           </PORTMAPS>
         </BUSINTERFACE>
-        <BUSINTERFACE BUSNAME="axi_bram_ctrl_1_BRAM_PORTA" NAME="BRAM_PORTB" TYPE="TARGET" VLNV="xilinx.com:interface:bram:1.0">
+        <BUSINTERFACE BUSNAME="RISC_V_core_pipelined_0_imem" NAME="BRAM_PORTB" TYPE="TARGET" VLNV="xilinx.com:interface:bram:1.0">
           <PARAMETER NAME="MEM_SIZE" VALUE="8192"/>
           <PARAMETER NAME="MEM_WIDTH" VALUE="32"/>
           <PARAMETER NAME="MEM_ECC" VALUE="NONE"/>
@@ -4531,8 +4531,8 @@
             <CONNECTION INSTANCE="axi_smc" PORT="aclk"/>
             <CONNECTION INSTANCE="axi_bram_ctrl_0" PORT="s_axi_aclk"/>
             <CONNECTION INSTANCE="axi_gpio_0" PORT="s_axi_aclk"/>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="clk"/>
             <CONNECTION INSTANCE="axi_bram_ctrl_1" PORT="s_axi_aclk"/>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="clk"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="O" NAME="FCLK_RESET0_N" POLARITY="ACTIVE_LOW" SIGIS="rst" SIGNAME="processing_system7_0_FCLK_RESET0_N">
