@@ -12,7 +12,7 @@
 
 module rv_pl(
   input  wire clk,
-  input  wire rst_n,
+  input  wire resetn,
 
   // signals for instr memory BRAM
   output  wire        imem_clk,
@@ -32,6 +32,11 @@ module rv_pl(
   output  wire [31:0] dmem_wd,
   input   wire [31:0] dmem_rd
 );
+
+  // Fix for vivado warning for reset naming
+  wire rst_n;
+  assign rst_n = resetn;
+
   // IF stage
   reg  [31:0] pc;
   wire [31:0] pc_p4 = pc + 32'd4;
@@ -82,7 +87,7 @@ module rv_pl(
   // IMEM 
   assign imem_enb = 1'b1; // always enabled
   assign imem_web = 4'b0000; // never write
-  assign imem_addr = pc << 2; // word-addressed
+  assign imem_addr = pc; // byte-addressed
   assign imem_wd = 32'b0; // unused
   assign instr_f = imem_rd; // directly connect imem read data to IF stage instruction
   assign imem_clk = clk;
@@ -98,7 +103,7 @@ module rv_pl(
 
   assign dmem_enb = (m_we_dm) ? 1'b1 : 1'b0; // enabled only when m_we_dm is high
   assign dmem_web = (m_we_dm) ? 4'b1111 : 4'b0000; // all bytes enabled
-  assign dmem_addr = m_alu_o << 2; // word-addressed from EX stage ALU output
+  assign dmem_addr = m_alu_o; // byte-addressed from EX stage ALU output
   assign dmem_wd = m_dm_wd; // write data from EX stage forwarding logic
   assign dm_rd = dmem_rd; // directly connect dmem read data to MA/WB register for forwarding to WB stage
   assign dmem_clk = clk;
