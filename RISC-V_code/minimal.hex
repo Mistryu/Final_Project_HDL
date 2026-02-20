@@ -1,12 +1,24 @@
 00002283   // lw   x5, 0(x0)       → x5 = data[0] (using x0 as base = 0x0)
 00402303   // lw   x6, 4(x0)       → x6 = data[1]
-00502223   // sw   x5, 4(x0)       → data[1] = x5 (SWAP)
+00502223   // sw   x5, 4(x0)       → data[1] = x5 (SWAP) 
 00602023   // sw   x6, 0(x0)       → data[0] = x6 (SWAP)
 
+//done - write DONE flag 0xCAFEBABE at 0x1FFC 
+// TODO I'm not using lui in case it's causing problems 
 
-cafec737  // lui  x14, 0xcafec    → x14 = 0xCAFEC000
-abe70713   // addi x14, x14, 0xabe → x14 = 0xCAFEBABE
-000027b7   // lui  x15, 0x2        → x15 = 0x00002000
-ffc78793   // addi x15, x15, -4    → x15 = 0x1FFC
-00e7a023   // sw   x14, 0(x15)     → mem[0x1FFC] = 0xCAFEBABE
-0000006f   // jal  x0, 0           → infinite loop
+0ca00713  // addi x14, x0,  0xCA  0x000000CA
+00871713  // slli x14, x14, 8     0x0000CA00
+0fe70713  // addi x14, x14, 0xFE  0x0000CAFE
+00871713  // slli x14, x14, 8     0x00CAFE00
+0ba70713  // addi x14, x14, 0xBA  0x00CAFEBA
+00871713  // slli x14, x14, 8     0xCAFEBA00
+0be70713  // addi x14, x14, 0xBE  0xCAFEBABE
+
+
+// Build 0x1FFC in x15
+7ff00793  // addi x15, x0,  0x7FF  0x000007FF
+00179793  // slli x15, x15, 1      0x00000FFE
+00178793  // addi x15, x15, 1      0x00000FFF
+00179793  // slli x15, x15, 1      0x00001FFE
+ffe78793  // addi x15, x15, -2     0x00001FFC
+00e7a023  // sw   x14, 0(x15)      mem[0x1FFC] = 0xCAFEBABE
