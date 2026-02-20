@@ -38,11 +38,11 @@ outer_increment:
     addi x3, x3, 1       # i++
     jal x0, outer_loop
 
+# This is teh version which still uses lui instructio 
 done:
     # Write DONE flag so Python script can detect completion (0xCAFEBABE at 0x1FFC)
     lui  x14, 0xcafeb             # 0xCAFEC000; then addi 0xabe (sign-ext) -> 0xCAFEBABE
     addi x14, x14, 0xabe
-    lui  x15, 0x2              # 0x2000; then addi -4 gives 0x1FFC
-    addi x15, x15, 0xffc
+    lui  x15, 0x1ffc              # loads 0x1FFC as flag successful 
     addi x0, x0, 0             # NOP so SW reads x14/x15 from reg file
     sw   x14, 0(x15)

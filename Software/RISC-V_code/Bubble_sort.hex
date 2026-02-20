@@ -35,7 +35,7 @@ fc9ff06f  // jal x0, inner_loop (offset -56)
 fb1ff06f  // jal x0, outer_loop (offset -64)
 
 //done - write DONE flag 0xCAFEBABE at 0x1FFC 
-// TODO I'm not using lui in case it's causing problems 
+// I'm not using lui in case it's causing problems 
 
 0ca00713  // addi x14, x0,  0xCA  0x000000CA
 00871713  // slli x14, x14, 8     0x0000CA00
