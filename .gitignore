@@ -10,3 +10,4 @@ RISC-V_code/RISCV/local/*.vcd
 *.vcd
 *.lxt
 *.fst
+temp
