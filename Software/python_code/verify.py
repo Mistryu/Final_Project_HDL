@@ -6,7 +6,6 @@ import struct
 BITSTREAM_PATH = "risc_v_wrapper.bit"
 PROGRAM_HEX = "Bubble_sort.hex"
 
-# TWO SEPARATE BRAM CONTROLLERS
 BRAM_SIZE = 0x2000
 
 STATUS_FLAG_OFFSET = 0x1FFC
@@ -42,8 +41,6 @@ def load_hex_file(filename):
 
 
 def write_instructions(instr_bram, instructions):
-    print(f"\nWriting {len(instructions)} instructions to I-MEM at {hex(INSTR_BRAM_BASE)}")
-    
     for i, instr in enumerate(instructions):
         addr = i * 4
         instr_bram.write(addr, instr)
@@ -51,8 +48,6 @@ def write_instructions(instr_bram, instructions):
     print(f"Instructions written successfully")
 
 def write_data_array(data_bram, data):
-    print(f"\nWriting {len(data)} integers to D-MEM at {hex(DATA_BRAM_BASE)}")
-
     for i, value in enumerate(data):
         addr = i * 4
         unsigned_val = value & 0xFFFFFFFF
@@ -117,7 +112,7 @@ def main():
     gpio_key = next(k for k in ol.ip_dict if "gpio" in k.lower())
     gpio = MMIO(int(ol.ip_dict[gpio_key]["phys_addr"]), int(ol.ip_dict[gpio_key]["addr_range"]))
     
-    # Sorting the brams to get which is which 
+    # Sorting the brams to ensure they are correctly identified
     sorted_brams = sorted(bram_controllers.items(), key=lambda x: x[1]['addr'])
     
     # Lower address = Data BRAM (0x40000000)
@@ -139,7 +134,7 @@ def main():
     print(f"D-MEM at {hex(DATA_BRAM_BASE)}\n")
     
     
-    print("\nPHASE 1: INITIALIZATION & INJECTION")
+    print("\nPHASE 1: INITIALIZATION ")
     
     # Hold in reset
     gpio.write(GPIO_TRI, 0x0)
@@ -180,8 +175,6 @@ def main():
         print(f"  data[{i}] @ {hex(addr)}: {signed_val} ({hex(val)})")
     
     print("\nPHASE 2: EXECUTION")
-    
-    print(f"GPIO before release: {hex(gpio.read(GPIO_DATA))}")
     
     # Release reset
     gpio.write(GPIO_DATA, 0x1)
