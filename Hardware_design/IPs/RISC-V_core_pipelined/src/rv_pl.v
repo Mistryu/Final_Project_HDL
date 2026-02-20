@@ -45,7 +45,7 @@ module rv_pl(
   // Pipeline registers
   wire [31:0] d_instr;
   wire [31:0] d_pc;
-  wire [31:0] d_pc_p4;
+  wire [31:0] d_pc_p4;t
 
   wire [31:0] e_instr;
   wire [31:0] e_pc;

@@ -34,10 +34,22 @@ fc9ff06f  // jal x0, inner_loop (offset -56)
 00118193  // addi x3, x3, 1
 fb1ff06f  // jal x0, outer_loop (offset -64)
 
-//done - write DONE flag 0xCAFEBABE at 0x1FFC for Python script
-0cafeb737  // lui  x14, 0xcafeb
-0abe70713  // addi x14, x14, 0xabe
-000207b7  // lui  x15, 0x2  (then addi -4 -> 0x1FFC)
-ffc78793  // addi x15, x15, 0xffc
-00000013  // nop
-00e7a023  // sw   x14, 0(x15)
+//done - write DONE flag 0xCAFEBABE at 0x1FFC 
+// TODO I'm not using lui in case it's causing problems 
+
+0ca00713  // addi x14, x0,  0xCA  0x000000CA
+00871713  // slli x14, x14, 8     0x0000CA00
+0fe70713  // addi x14, x14, 0xFE  0x0000CAFE
+00871713  // slli x14, x14, 8     0x00CAFE00
+0ba70713  // addi x14, x14, 0xBA  0x00CAFEBA
+00871713  // slli x14, x14, 8     0xCAFEBA00
+0be70713  // addi x14, x14, 0xBE  0xCAFEBABE
+
+
+// Build 0x1FFC in x15
+7ff00793  // addi x15, x0,  0x7FF  0x000007FF
+00179793  // slli x15, x15, 1      0x00000FFE
+00178793  // addi x15, x15, 1      0x00000FFF
+00179793  // slli x15, x15, 1      0x00001FFE
+ffe78793  // addi x15, x15, -2     0x00001FFC
+00e7a023  // sw   x14, 0(x15)      mem[0x1FFC] = 0xCAFEBABE
