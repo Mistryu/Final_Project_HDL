@@ -154,8 +154,8 @@ def main():
         addr = i * 4
         written = instructions[i]
         readback = instr_bram.read(addr)
-        match = "✓" if written == readback else "✗"
-        print(f"  instr[{i}] @ {hex(addr)}: wrote {hex(written)}, read {hex(readback)} {match}")
+        match = "Good" if written == readback else "Bad"
+        print(f"  instr[{i}] addr: {hex(addr)}: wrote {hex(written)}, read {hex(readback)} {match}")
     
     # Write data to DATA BRAM
     test_array = [random.randint(ARRAY_MIN, ARRAY_MAX) for _ in range(ARRAY_SIZE)]
@@ -166,13 +166,12 @@ def main():
     
     golden_result = sorted(test_array)
     
-    # Verify data write
     print("\nVerifying data write:")
     for i in range(min(5, ARRAY_SIZE)):
         addr = i * 4
         val = data_bram.read(addr)
         signed_val = struct.unpack('i', struct.pack('I', val))[0]
-        print(f"  data[{i}] @ {hex(addr)}: {signed_val} ({hex(val)})")
+        print(f"  data[{i}] addr: {hex(addr)}: {signed_val} ({hex(val)})")
     
     print("\nPHASE 2: EXECUTION")
     
@@ -181,24 +180,17 @@ def main():
     time.sleep(0.1)
     
     gpio_val = gpio.read(GPIO_DATA)
-    print(f"GPIO after release (should be 1): {hex(gpio_val)}")
-    if gpio_val != 1:
-        print("WARNING: GPIO did not change to 1!")
-    
-    first_instr_check = instr_bram.read(0x0)
-    print(f"First instruction in I-MEM: {hex(first_instr_check)}")
     
     success, magic, exec_time = poll_status_flag(data_bram)
     
-    # Read data after execution
     print("\nReading data after execution:")
     for i in range(min(5, ARRAY_SIZE)):
         addr = i * 4
         val = data_bram.read(addr)
         signed_val = struct.unpack('i', struct.pack('I', val))[0]
-        print(f"  data[{i}] @ {hex(addr)}: {signed_val} ({hex(val)})")
+        print(f"  data[{i}] addr: {hex(addr)}: {signed_val} ({hex(val)})")
     
-    print(f"\nStatus flag @ {hex(STATUS_FLAG_OFFSET)}: {hex(data_bram.read(STATUS_FLAG_OFFSET))}")
+    print(f"\nStatus flag addr: {hex(STATUS_FLAG_OFFSET)}: {hex(data_bram.read(STATUS_FLAG_OFFSET))}")
     
     print("\nPHASE 3: VERIFICATION")
     
@@ -217,7 +209,6 @@ def main():
             mismatches.append((i, golden_result[i], hw_result[i]))
     
     print(f"\nExecution time: {exec_time:.3f}s")
-    print(f"Array size: {ARRAY_SIZE}")
     
     if mismatches:
         print(f"\n FAILURE: {len(mismatches)} mismatches found!")
@@ -226,7 +217,7 @@ def main():
         return False
     else:
         print("\n SUCCESS: All values match!")
-        print(f"Sorted values: {hw_result[:10]}...")
+        print(f"Sorted values: {hw_result[:31]}...")
         return True
 
 if __name__ == "__main__":
