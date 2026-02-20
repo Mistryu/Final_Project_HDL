@@ -1,5 +1,5 @@
 #! /usr/bin/vvp
-:ivl_version "11.0 (stable)";
+:ivl_version "12.0 (stable)";
 :ivl_delay_selection "TYPICAL";
 :vpi_time_precision - 12;
 :vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
