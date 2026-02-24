@@ -15,6 +15,7 @@ module hazard_unit (
   input  wire       w_we_rf,
   input  wire       branch_taken,
   input  wire       jump,
+  input  wire       fetch_valid,
   output reg  [1:0] forward_a,
   output reg  [1:0] forward_b,
   output reg        stall,
@@ -24,7 +25,7 @@ module hazard_unit (
   always @(*) begin
     forward_a = 2'b00;
     forward_b = 2'b00;
-    stall     = 1'b0;
+    stall     = !fetch_valid;
     flush_plr1 = 1'b0;
     flush_plr2 = 1'b0;
 
@@ -39,11 +40,13 @@ module hazard_unit (
     if (w_we_rf && (w_rd != 5'd0) && (w_rd == e_rs2) && (forward_b == 2'b00))
       forward_b = 2'b01;
 
-    // Load-use: stall one cycle, do NOT flush — load moves to M, dependent moves to E, then forward from M
+    // Load-use: stall one cycle AND flush PLR2 to insert bubble in EX.
+    // This prevents the dependent instruction from entering EX before the
+    // load result is available for forwarding from MEM stage.
     if (e_is_load && (e_rd != 5'd0) &&
         ((e_rd == d_rs1) || (d_uses_rs2 && (e_rd == d_rs2)))) begin
       stall     = 1'b1;
-      flush_plr2 = 1'b0;
+      flush_plr2 = 1'b1;   // Insert bubble (prevents duplicate EX entry)
     end
 
     if (branch_taken || jump) begin

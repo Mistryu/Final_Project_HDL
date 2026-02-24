@@ -1,14 +1,15 @@
-`timescale 1ns/1ps
-`include "decoder.v"
-`include "hazard_unit.v"
-`include "reg_file.v"
-`include "sign_ext.v"
-`include "alu.v"
-`include "plr1.v"
-`include "plr2.v"
-`include "plr3.v"
-`include "plr4.v"
+/**
+ * rv_pl.v – 5-Stage Pipelined RISC-V Core (RV32I)
+ *
+ * Top-level pipeline integrator with synchronous BRAM interfaces for both
+ * instruction and data memory.  Implements full forwarding, hazard
+ * detection, and BRAM latency compensation.
+ *
+ * Pipeline stages:  IF → ID → EX → MA → WB
+ * Memory model:     Synchronous BRAM (1-cycle read latency)
+ */
 
+`timescale 1ns/1ps
 
 module rv_pl(
   input  wire clk,
@@ -17,15 +18,15 @@ module rv_pl(
   // signals for instr memory BRAM
   output  wire        imem_clk,
   output  wire        imem_enb,
-  output  wire        imem_rstn,
+  output  wire        imem_rst,
   output  wire [3:0]  imem_web,
   output  wire [31:0] imem_addr,
-  output  wire [31:0] imem_wd, // unused for imem; kept for design connections clarity
+  output  wire [31:0] imem_wd,
   input   wire [31:0] imem_rd,
 
   // signals for data memory BRAM
   output wire         dmem_clk,
-  output wire         dmem_rstn,
+  output wire         dmem_rst,
   output  wire        dmem_enb,
   output  wire [3:0]  dmem_web,
   output  wire [31:0] dmem_addr,
@@ -33,14 +34,64 @@ module rv_pl(
   input   wire [31:0] dmem_rd
 );
 
-  // Fix for vivado warning for reset naming
   wire rst_n;
   assign rst_n = resetn;
+
+  // ========================================================================
+  // IMEM BRAM LATENCY COMPENSATION
+  // ========================================================================
+  // Synchronous BRAM: address captured at posedge N, data available at
+  // posedge N+1.  pc_f tracks the PC that was presented to BRAM last
+  // cycle, keeping the instruction and its PC aligned in PLR1.
+  // fetch_valid gates the pipeline for one cycle after reset while the
+  // first BRAM read completes.
+
+  reg         fetch_valid;
+  reg  [31:0] pc_f;           // PC presented to BRAM last cycle
+
+  always @(posedge clk) begin
+    if (!rst_n) begin
+      fetch_valid <= 1'b0;
+      pc_f        <= 32'b0;
+    end else begin
+      fetch_valid <= 1'b1;    // Valid 1 cycle after reset
+      pc_f        <= pc;      // Track which PC went to BRAM
+    end
+  end
+
+  wire [31:0] instr_f = imem_rd;  // BRAM output (1-cycle delayed by hardware)
+
+  // ========================================================================
+  // BRAM RECOVERY FLUSH
+  // ========================================================================
+  // After a stall release or branch/jump redirect the BRAM still outputs
+  // the stale instruction for one cycle.  branch_recovery and
+  // stall_recovery each detect their respective transition and flush
+  // PLR1 for that single recovery cycle.
+  // ========================================================================
+  reg was_stalled;
+  reg stall_recovery;
+  reg branch_recovery;
+
+  always @(posedge clk) begin
+    if (!rst_n) begin
+      was_stalled     <= 1'b1;
+      stall_recovery  <= 1'b0;
+      branch_recovery <= 1'b0;
+    end else begin
+      was_stalled     <= stall;
+      stall_recovery  <= was_stalled && !stall;
+      branch_recovery <= flush_plr1_hz;
+    end
+  end
+
+  wire bram_recovery = stall_recovery || branch_recovery;
+
+  // ========================================================================
 
   // IF stage
   reg  [31:0] pc;
   wire [31:0] pc_p4 = pc + 32'd4;
-  wire [31:0] instr_f;
 
   // Pipeline registers
   wire [31:0] d_instr;
@@ -84,40 +135,33 @@ module rv_pl(
   wire        w_we_rf;
   wire [1:0]  w_sel_result;
 
-  // IMEM 
-  assign imem_enb = 1'b1; // always enabled
-  assign imem_web = 4'b0000; // never write
-  assign imem_addr = pc; // byte-addressed
-  assign imem_wd = 32'b0; // unused
-  assign instr_f = imem_rd; // directly connect imem read data to IF stage instruction
-  assign imem_clk = clk;
-  assign imem_rstn = rst_n;
-  // replaced old usage
-  // imem IMEM (
-  //   .addr(pc),
-  //   .rd(instr_f)
-  // );
+  // IMEM port assignments (read-only)
+  assign imem_enb  = 1'b1;
+  assign imem_web  = 4'b0000;
+  assign imem_addr = pc;
+  assign imem_wd   = 32'b0;
+  assign imem_clk  = clk;
+  assign imem_rst  = ~rst_n;
 
-  // DMEM
+  // ========================================================================
+  // DMEM BRAM LATENCY COMPENSATION
+  // ========================================================================
+  // Address driven from EX stage (one cycle before MA) so the BRAM read
+  // data is available at MA for PLR4 capture and M-stage forwarding.
+  // Stores also commit from EX for the same latency reason.
+  // ========================================================================
   wire [31:0] dm_rd;
+  assign dmem_enb  = 1'b1;
+  assign dmem_web  = e_we_dm ? 4'b1111 : 4'b0000;
+  assign dmem_addr = e_alu_o;
+  assign dmem_wd   = e_dm_wd;
+  assign dm_rd     = dmem_rd;
+  assign dmem_clk  = clk;
+  assign dmem_rst  = ~rst_n;
 
-  assign dmem_enb = (m_we_dm) ? 1'b1 : 1'b0; // enabled only when m_we_dm is high
-  assign dmem_web = (m_we_dm) ? 4'b1111 : 4'b0000; // all bytes enabled
-  assign dmem_addr = m_alu_o; // byte-addressed from EX stage ALU output
-  assign dmem_wd = m_dm_wd; // write data from EX stage forwarding logic
-  assign dm_rd = dmem_rd; // directly connect dmem read data to MA/WB register for forwarding to WB stage
-  assign dmem_clk = clk;
-  assign dmem_rstn = rst_n;
-  // replaced old usage
-  // dmem DMEM (
-  //   .clk(clk),
-  //   .we(m_we_dm),
-  //   .addr(m_alu_o),
-  //   .wd(m_dm_wd),
-  //   .rd(dm_rd)
-  // );
-
-  // ID stage decode
+  // ========================================================================
+  // ID STAGE – DECODE
+  // ========================================================================
   wire [4:0] d_rs1 = d_instr[19:15];
   wire [4:0] d_rs2 = d_instr[24:20];
   wire [4:0] d_rd  = d_instr[11:7];
@@ -154,6 +198,9 @@ module rv_pl(
     .imm(d_ext)
   );
 
+  // ========================================================================
+  // REGISTER FILE
+  // ========================================================================
   wire [31:0] rf_rd1;
   wire [31:0] rf_rd2;
   reg_file RF (
@@ -171,12 +218,14 @@ module rv_pl(
     .rd2(rf_rd2)
   );
 
-  // Hazard unit
+  // ========================================================================
+  // HAZARD UNIT
+  // ========================================================================
   wire        e_is_load = (e_sel_result == 2'b01) && e_we_rf;
   wire        m_is_load = (m_sel_result == 2'b01) && m_we_rf;
   wire        e_branch_taken;
   wire        stall;
-  wire        flush_plr1;
+  wire        flush_plr1_hz;   // raw flush from hazard unit
   wire        flush_plr2;
   wire [1:0]  forward_a;
   wire [1:0]  forward_b;
@@ -196,28 +245,36 @@ module rv_pl(
     .w_we_rf(w_we_rf),
     .branch_taken(e_branch_taken),
     .jump(e_jump),
+    .fetch_valid(fetch_valid),
     .forward_a(forward_a),
     .forward_b(forward_b),
     .stall(stall),
-    .flush_plr1(flush_plr1),
+    .flush_plr1(flush_plr1_hz),
     .flush_plr2(flush_plr2)
   );
 
-  // IF/ID register
+  // PLR1 flush: hazard-unit request OR BRAM recovery bubble
+  wire flush_plr1 = flush_plr1_hz || bram_recovery;
+
+  // ========================================================================
+  // PIPELINE REGISTERS
+  // ========================================================================
+  
+  // IF/ID Pipeline Register (PLR1)
   plr1 PLR1 (
     .clk(clk),
     .rst_n(rst_n),
     .en(!stall),
     .clr(flush_plr1),
     .instr_in(instr_f),
-    .pc_in(pc),
-    .pc_p4_in(pc_p4),
+    .pc_in(pc_f),
+    .pc_p4_in(pc_f + 32'd4),
     .instr_out(d_instr),
     .pc_out(d_pc),
     .pc_p4_out(d_pc_p4)
   );
 
-  // ID/EX register
+  // ID/EX Pipeline Register (PLR2)
   plr2 PLR2 (
     .clk(clk),
     .rst_n(rst_n),
@@ -258,7 +315,11 @@ module rv_pl(
     .jump_out(e_jump)
   );
 
-  // EX stage forwarding
+  // ========================================================================
+  // EX STAGE – ALU & FORWARDING
+  // ========================================================================
+
+  // M-stage forward mux (includes dm_rd for loads)
   wire [31:0] m_forward = (m_sel_result == 2'b00) ? m_alu_o :
                           (m_sel_result == 2'b10) ? m_pc_p4 :
                           (m_sel_result == 2'b11) ? m_ext :
@@ -292,11 +353,11 @@ module rv_pl(
   assign e_branch_taken = e_branch && e_zero;
   wire [31:0] e_target_pc = e_pc + e_ext;
 
-  // Store data: use forwarded value; explicitly bypass from WB when producer in WB (same cycle)
-  wire [31:0] e_dm_wd = (e_we_dm && w_we_rf && (w_rd != 5'd0) && (w_rd == e_rs2)) ? w_result :
-                        fwd_b_val;
+  // Store data with W-stage forwarding
+  wire [31:0] e_dm_wd = (e_we_dm && w_we_rf && (w_rd != 5'd0) && (w_rd == e_rs2))
+                        ? w_result : fwd_b_val;
 
-  // EX/MA register
+  // EX/MA Pipeline Register (PLR3)
   plr3 PLR3 (
     .clk(clk),
     .rst_n(rst_n),
@@ -320,7 +381,7 @@ module rv_pl(
     .sel_result_out(m_sel_result)
   );
 
-  // MA/WB register
+  // MA/WB Pipeline Register (PLR4)
   plr4 PLR4 (
     .clk(clk),
     .rst_n(rst_n),
@@ -342,7 +403,9 @@ module rv_pl(
     .sel_result_out(w_sel_result)
   );
 
-  // PC update
+  // ========================================================================
+  // PC UPDATE
+  // ========================================================================
   wire [31:0] pc_next = (e_branch_taken || e_jump) ? e_target_pc : pc_p4;
 
   always @(posedge clk) begin
