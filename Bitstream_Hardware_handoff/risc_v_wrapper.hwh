@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Fri Feb 20 21:17:21 2026" VIVADOVERSION="2021.1">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Tue Feb 24 04:44:19 2026" VIVADOVERSION="2021.1">
 
   <SYSTEMINFO ARCH="zynq" DEVICE="7z020" NAME="axi_bram_bd" PACKAGE="clg400" SPEEDGRADE="-1"/>
 
@@ -169,7 +169,7 @@
   </EXTERNALINTERFACES>
 
   <MODULES>
-    <MODULE COREREVISION="1" FULLNAME="/RISC_V_core_pipelined_0" HWVERSION="2.0" INSTANCE="RISC_V_core_pipelined_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="RISC_V_core_pipelined" VLNV="user.org:user:RISC_V_core_pipelined:2.0">
+    <MODULE COREREVISION="4" FULLNAME="/RISC_V_core_pipelined_0" HWVERSION="2.0" INSTANCE="RISC_V_core_pipelined_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="RISC_V_core_pipelined" VLNV="user.org:user:RISC_V_core_pipelined:2.0">
       <DOCUMENTS/>
       <PARAMETERS>
         <PARAMETER NAME="Component_Name" VALUE="axi_bram_bd_RISC_V_core_pipelined_0_1"/>
@@ -196,7 +196,7 @@
             <CONNECTION INSTANCE="blk_mem_gen_1" PORT="enb"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="imem_rstn" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rstn">
+        <PORT DIR="O" NAME="imem_rst" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rst">
           <CONNECTIONS>
             <CONNECTION INSTANCE="blk_mem_gen_1" PORT="rstb"/>
           </CONNECTIONS>
@@ -226,7 +226,7 @@
             <CONNECTION INSTANCE="blk_mem_gen_0" PORT="clkb"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="dmem_rstn" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_dmem_rstn">
+        <PORT DIR="O" NAME="dmem_rst" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_dmem_rst">
           <CONNECTIONS>
             <CONNECTION INSTANCE="blk_mem_gen_0" PORT="rstb"/>
           </CONNECTIONS>
@@ -259,37 +259,37 @@
       </PORTS>
       <BUSINTERFACES>
         <BUSINTERFACE BUSNAME="RISC_V_core_pipelined_0_dmem" NAME="dmem" TYPE="INITIATOR" VLNV="xilinx.com:interface:bram:1.0">
+          <PARAMETER NAME="MASTER_TYPE" VALUE="BRAM_CTRL"/>
           <PARAMETER NAME="MEM_SIZE" VALUE="8192"/>
           <PARAMETER NAME="MEM_WIDTH" VALUE="32"/>
           <PARAMETER NAME="MEM_ECC" VALUE="NONE"/>
-          <PARAMETER NAME="MASTER_TYPE" VALUE="BRAM_CTRL"/>
           <PARAMETER NAME="READ_WRITE_MODE"/>
           <PARAMETER NAME="READ_LATENCY" VALUE="1"/>
           <PORTMAPS>
-            <PORTMAP LOGICAL="RST" PHYSICAL="dmem_rstn"/>
             <PORTMAP LOGICAL="CLK" PHYSICAL="dmem_clk"/>
             <PORTMAP LOGICAL="DIN" PHYSICAL="dmem_wd"/>
             <PORTMAP LOGICAL="EN" PHYSICAL="dmem_enb"/>
             <PORTMAP LOGICAL="DOUT" PHYSICAL="dmem_rd"/>
             <PORTMAP LOGICAL="WE" PHYSICAL="dmem_web"/>
             <PORTMAP LOGICAL="ADDR" PHYSICAL="dmem_addr"/>
+            <PORTMAP LOGICAL="RST" PHYSICAL="dmem_rst"/>
           </PORTMAPS>
         </BUSINTERFACE>
         <BUSINTERFACE BUSNAME="RISC_V_core_pipelined_0_imem" NAME="imem" TYPE="INITIATOR" VLNV="xilinx.com:interface:bram:1.0">
+          <PARAMETER NAME="MASTER_TYPE" VALUE="BRAM_CTRL"/>
           <PARAMETER NAME="MEM_SIZE" VALUE="8192"/>
           <PARAMETER NAME="MEM_WIDTH" VALUE="32"/>
           <PARAMETER NAME="MEM_ECC" VALUE="NONE"/>
-          <PARAMETER NAME="MASTER_TYPE" VALUE="BRAM_CTRL"/>
           <PARAMETER NAME="READ_WRITE_MODE"/>
           <PARAMETER NAME="READ_LATENCY" VALUE="1"/>
           <PORTMAPS>
-            <PORTMAP LOGICAL="RST" PHYSICAL="imem_rstn"/>
             <PORTMAP LOGICAL="CLK" PHYSICAL="imem_clk"/>
             <PORTMAP LOGICAL="DIN" PHYSICAL="imem_wd"/>
             <PORTMAP LOGICAL="EN" PHYSICAL="imem_enb"/>
             <PORTMAP LOGICAL="DOUT" PHYSICAL="imem_rd"/>
             <PORTMAP LOGICAL="WE" PHYSICAL="imem_web"/>
             <PORTMAP LOGICAL="ADDR" PHYSICAL="imem_addr"/>
+            <PORTMAP LOGICAL="RST" PHYSICAL="imem_rst"/>
           </PORTMAPS>
         </BUSINTERFACE>
       </BUSINTERFACES>
@@ -3004,9 +3004,9 @@
             <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="dmem_clk"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="rstb" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_dmem_rstn">
+        <PORT DIR="I" NAME="rstb" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_dmem_rst">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="dmem_rstn"/>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="dmem_rst"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="I" NAME="enb" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_dmem_enb">
@@ -3269,9 +3269,9 @@
             <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_clk"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="rstb" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rstn">
+        <PORT DIR="I" NAME="rstb" SIGIS="rst" SIGNAME="RISC_V_core_pipelined_0_imem_rst">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_rstn"/>
+            <CONNECTION INSTANCE="RISC_V_core_pipelined_0" PORT="imem_rst"/>
           </CONNECTIONS>
         </PORT>
         <PORT DIR="I" NAME="enb" SIGIS="undef" SIGNAME="RISC_V_core_pipelined_0_imem_enb">

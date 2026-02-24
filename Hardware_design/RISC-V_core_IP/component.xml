@@ -57,14 +57,6 @@
       <spirit:portMaps>
         <spirit:portMap>
           <spirit:logicalPort>
-            <spirit:name>RST</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>dmem_rstn</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
             <spirit:name>CLK</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
@@ -111,7 +103,21 @@
             <spirit:name>dmem_addr</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>dmem_rst</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
       </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>MASTER_TYPE</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.DMEM.MASTER_TYPE">BRAM_CTRL</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
       <spirit:name>imem</spirit:name>
@@ -119,14 +125,6 @@
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="bram_rtl" spirit:version="1.0"/>
       <spirit:master/>
       <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>RST</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>imem_rstn</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
         <spirit:portMap>
           <spirit:logicalPort>
             <spirit:name>CLK</spirit:name>
@@ -175,7 +173,21 @@
             <spirit:name>imem_addr</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>imem_rst</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
       </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>MASTER_TYPE</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.IMEM.MASTER_TYPE">BRAM_CTRL</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
     </spirit:busInterface>
   </spirit:busInterfaces>
   <spirit:model>
@@ -192,7 +204,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ba98a45c</spirit:value>
+            <spirit:value>39ea91fb</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -208,7 +220,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ba98a45c</spirit:value>
+            <spirit:value>39ea91fb</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -281,7 +293,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>imem_rstn</spirit:name>
+        <spirit:name>imem_rst</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -375,7 +387,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>dmem_rstn</spirit:name>
+        <spirit:name>dmem_rst</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -483,52 +495,43 @@
       <spirit:file>
         <spirit:name>src/alu.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/decoder.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/hazard_unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr2.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr3.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr4.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/reg_file.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/sign_ext.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/rv_pl.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_22d3d174</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_0114ecec</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -536,47 +539,38 @@
       <spirit:file>
         <spirit:name>src/alu.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/decoder.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/hazard_unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr1.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr2.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr3.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/plr4.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/reg_file.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/sign_ext.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/rv_pl.v</spirit:name>
@@ -610,11 +604,11 @@
       </xilinx:taxonomies>
       <xilinx:displayName>RISC_V_core_pipelined</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>2</xilinx:coreRevision>
+      <xilinx:coreRevision>4</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:RISC_V_core_pipelined:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2026-02-20T20:54:12Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2026-02-24T03:41:53Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.df@2467db65_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/vivado_design/IPs/RISC-V_core_pipelined</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.df@2f7cc01b_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/vivado_design/IPs/RISC-V_core_pipelined</xilinx:tag>
@@ -700,13 +694,46 @@
         <xilinx:tag xilinx:name="ui.data.coregen.df@67d7c0a3_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.df@552fb59b_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.df@4707b43_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@67545cc1_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@66d35ec6_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4c034b2a_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7d1a0087_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4ce9ebc1_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7868e7ed_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@40bc1e2d_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@3b3cc14a_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4dfa45a3_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1b9c2491_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2748b842_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2d0b4fe5_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@79ce9d66_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6073ab16_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@424129c1_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@7516db20_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@54b08ff9_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@f0d2054_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@55e161ac_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1fe4e261_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@515adb2f_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@49212e3d_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1efc658c_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4b17a8ee_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@4e33aaa2_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@a5a35c1_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@139b7423_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6e673085_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@57db843e_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6a2392fc_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2934e11_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@187c6925_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@51969282_ARCHIVE_LOCATION">/home/georgi/Desktop/HDL/final project/Final_Project_HDL/Hardware_design/RISC-V_core_IP</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2021.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b631d475"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="e8a6ef28"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="b15bf6df"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="d2f475f0"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="04bc5bd8"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="a1a115df"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="0c4bf23a"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
