@@ -5,7 +5,7 @@
 //outer_loop
 fff10213  // addi x4, x2, -1
 0041a2b3  // slt x5, x3, x4
-04228463  // beq x5, x0, done (offset +72)
+04028863  // beq x5, x0, done
 
 00000313  // addi x6, x0, 0
 403103b3  // sub x7, x2, x3
@@ -13,26 +13,28 @@ fff38393  // addi x7, x7, -1
 
 //inner_loop
 00732433  // slt x8, x6, x7
-02840463  // beq x8, x0, outer_increment (offset +44)
+02040a63  // beq x8, x0, outer_increment
 
 00231493  // slli x9, x6, 2
-009085b3  // add x10, x1, x9
+00908533  // add x10, x1, x9
 00052583  // lw x11, 0(x10)
 00452603  // lw x12, 4(x10)
+00000013  // nop
 
 00b626b3  // slt x13, x12, x11
-00c68463  // beq x13, x0, no_swap (offset +12)
+00000013  // nop
+00068663  // beq x13, x0, no_swap 
 
 00c52023  // sw x12, 0(x10)
 00b52223  // sw x11, 4(x10)
 
 //no_swap
 00130313  // addi x6, x6, 1
-fc9ff06f  // jal x0, inner_loop (offset -56)
+fcdff06f  // jal x0, inner_loop
 
 //outer_increment
 00118193  // addi x3, x3, 1
-fb1ff06f  // jal x0, outer_loop (offset -64)
+fadff06f  // jal x0, outer_loop 
 
 //done - write DONE flag 0xCAFEBABE at 0x1FFC 
 // I'm not using lui in case it's causing problems 
@@ -47,9 +49,9 @@ fb1ff06f  // jal x0, outer_loop (offset -64)
 
 
 // Build 0x1FFC in x15
-7ff00793  // addi x15, x0,  0x7FF  0x000007FF
-00179793  // slli x15, x15, 1      0x00000FFE
-00178793  // addi x15, x15, 1      0x00000FFF
-00179793  // slli x15, x15, 1      0x00001FFE
-ffe78793  // addi x15, x15, -2     0x00001FFC
+cafeb737  // lui  x14, 0xCAFEB
+55f70713  // addi x14, x14, 0x55F
+55f70713  // addi x14, x14, 0x55F
+7ff00793  // addi x15, x0, 0x7FF
+00279793  // slli x15, x15, 2
 00e7a023  // sw   x14, 0(x15)      mem[0x1FFC] = 0xCAFEBABE
