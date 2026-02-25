@@ -37,21 +37,11 @@ fcdff06f  // jal x0, inner_loop
 fadff06f  // jal x0, outer_loop 
 
 //done - write DONE flag 0xCAFEBABE at 0x1FFC 
-// I'm not using lui in case it's causing problems 
-
-0ca00713  // addi x14, x0,  0xCA  0x000000CA
-00871713  // slli x14, x14, 8     0x0000CA00
-0fe70713  // addi x14, x14, 0xFE  0x0000CAFE
-00871713  // slli x14, x14, 8     0x00CAFE00
-0ba70713  // addi x14, x14, 0xBA  0x00CAFEBA
-00871713  // slli x14, x14, 8     0xCAFEBA00
-0be70713  // addi x14, x14, 0xBE  0xCAFEBABE
-
-
-// Build 0x1FFC in x15
 cafeb737  // lui  x14, 0xCAFEB
 55f70713  // addi x14, x14, 0x55F
 55f70713  // addi x14, x14, 0x55F
+
+// Build 0x1FFC in x15
 7ff00793  // addi x15, x0, 0x7FF
 00279793  // slli x15, x15, 2
 00e7a023  // sw   x14, 0(x15)      mem[0x1FFC] = 0xCAFEBABE

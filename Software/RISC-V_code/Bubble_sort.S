@@ -41,6 +41,7 @@ done:
     lui  x14, 0xCAFEB          # x14 = 0xCAFEB000
     addi x14, x14, 0x55F       # x14 = 0xCAFEB55F
     addi x14, x14, 0x55F       # x14 = 0xCAFEBABE
+    
     addi x15, x0, 0x7FF        # x15 = 0x000007FF
     slli x15, x15, 2           # x15 = 0x00001FFC
     sw   x14, 0(x15)           # mem[0x1FFC] = 0xCAFEBABE
